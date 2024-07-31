@@ -98,10 +98,6 @@ extern "C" {
         if (tensor1->device == "cpu" && tensor2->device == "cpu")
             return tensor1->matmul_tensor_cpu(tensor2);
         else {
-            std::cout << "Heeeeeeeeeeeeeeeere" << std::endl;
-            tensor1->print();
-            tensor2->print();
-            std::cout << "Heeeeeeeeeeeeeeeere" << std::endl;
              return tensor1->matmul_tensor_sycl(tensor2);
         }
     }

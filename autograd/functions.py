@@ -82,27 +82,13 @@ class MatmulBackward:
     def backward(self, gradient):
         x, y = self.input
         
-        print("Test1")
-
         if x.ndim != y.ndim: # broadcasted case
-            print("Test2")
             aux = (gradient @ y.transpose(-1,-2))
             aux_sum = aux.sum(axis=0)
             return [aux_sum, x.transpose(-1,-2) @ gradient]
         else:
-            print(gradient.shape)
-            print(y.shape)
-            print(x.shape)
-            print("Y transpose")
-            gradient.print_tensor()
             res1 = gradient @ y.transpose(-1,-2)
-            gradient.print_tensor()
-            print("/"*10)
-            print(gradient.shape)
-            print("/"*10)
-            print("X transpose")
             res = [res1, x.transpose(-1,-2) @ gradient]
-            print("Here")
             return res
         
 """class PowBackward:

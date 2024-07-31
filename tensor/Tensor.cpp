@@ -230,9 +230,6 @@ Tensor *Tensor::log_tensor_sycl() {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-
-    std::cout << "Successfully computed log on tensor using SYCL." << std::endl;
-
     return result;
 }
 
@@ -313,9 +310,6 @@ Tensor *Tensor::sum_tensor_sycl(int axis, bool keepdim) {
     Tensor* result = new Tensor(std::move(result_data), new_shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-
-    std::cout << "Successfully computed sum tensor using SYCL." << std::endl;
-
     return result;
 }
 
@@ -344,8 +338,6 @@ Tensor *Tensor::add_tensor_sycl(Tensor& tensor2) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully added tensors using SYCL." << std::endl;
-
     return result;
 }
 
@@ -366,8 +358,6 @@ Tensor *Tensor::scalar_add_tensor_sycl(float scalar) {
 
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
-
-    std::cout << "Successfully added tensors using SYCL." << std::endl;
 
     return result;
 }
@@ -396,8 +386,6 @@ Tensor *Tensor::sub_tensor_sycl(Tensor& tensor2) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully subtracted tensors using SYCL." << std::endl;
-
     return result;
 }
 
@@ -419,8 +407,6 @@ Tensor *Tensor::scalar_pow_tensor_sycl(float base) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully performed scalar power operation on tensor using SYCL." << std::endl;
-
     return result;
 }
 
@@ -435,7 +421,6 @@ Tensor *Tensor::elementwise_mul_tensor_sycl(Tensor* tensor) {
     auto result_data = std::make_unique<float[]>(size);
     sycl::buffer<float, 1> result_buffer(result_data.get(), sycl::range<1>(size));
 
-    std::cout << "Hello 1" << std::endl;
 
     if (!data_gpu || !tensor->data_gpu) {
         std::cerr << "SYCL buffers must be initialized before using them." << std::endl;
@@ -452,13 +437,9 @@ Tensor *Tensor::elementwise_mul_tensor_sycl(Tensor* tensor) {
         });
     }).wait();
 
-    std::cout << "Hello 2" << std::endl;
 
     Tensor* result = new Tensor(std::move(data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
-
-    std::cout << "Successfully performed element-wise multiplication on tensors using SYCL." << std::endl;
-
 
     return result;
 }
@@ -487,8 +468,6 @@ Tensor *Tensor::elementwise_div_tensor_sycl(Tensor* tensor) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully performed element-wise division on tensors using SYCL." << std::endl;
-
     return result;
 }
 
@@ -513,8 +492,6 @@ Tensor *Tensor::scalar_div_tensor_sycl(float scalar) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully performed scalar division on tensor using SYCL." << std::endl;
-
     return result;
 }
 
@@ -535,8 +512,6 @@ Tensor *Tensor::scalar_sub_tensor_sycl(float scalar) {
 
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
-
-    std::cout << "Successfully performed scalar subtraction on tensor using SYCL." << std::endl;
 
     return result;
 }
@@ -559,8 +534,6 @@ Tensor *Tensor::scalar_mul_tensor_sycl(float scalar) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully performed scalar multiplication on tensor using SYCL." << std::endl;
-
     return result;
 }
 
@@ -581,8 +554,6 @@ Tensor *Tensor::tensor_div_scalar_sycl(float scalar) {
 
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
-
-    std::cout << "Successfully performed tensor division by scalar using SYCL." << std::endl;
 
     return result;
 }
@@ -605,8 +576,6 @@ Tensor *Tensor::tensor_pow_scalar_sycl(float exponent) {
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully performed tensor power operation using SYCL." << std::endl;
-
     return result;
 }
 
@@ -615,11 +584,6 @@ Tensor *Tensor::matmul_tensor_sycl(Tensor* tensor2) {
         std::cerr << "Matrix multiplication requires both tensors to be 2-dimensional." << std::endl;
         return nullptr;
     }
-
-    std::cout << "Shape tensor1: " << shape[0] << "," << shape[1] << " Shape tensor2: " << tensor2->shape[0] << "," << tensor2->shape[1] << std::endl;
-
-    this->print();
-    tensor2->print();
     
     if (shape[1] != tensor2->shape[0]) {
         std::cerr << "Cannot multiply tensors. Inner dimensions do not match: " << shape[0] << "," << shape[1] << " " << tensor2->shape[0] << "," << tensor2->shape[1] << std::endl;
@@ -655,8 +619,6 @@ Tensor *Tensor::matmul_tensor_sycl(Tensor* tensor2) {
     Tensor* result = new Tensor(std::move(result_data), new_shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
 
-    std::cout << "Successfully multiplied tensors using SYCL." << std::endl;
-
     return result;
 }
 
@@ -688,7 +650,6 @@ void Tensor::zeros_like_tensor_gpu() {
         });
     }).wait();
 
-    std::cout << "Tensor data initialized to zeros on GPU." << std::endl;
 }
 
 void Tensor::ones_like_tensor_gpu() {
@@ -703,8 +664,6 @@ void Tensor::ones_like_tensor_gpu() {
             acc[i] = 1.0f;
         });
     }).wait();
-
-    std::cout << "Tensor data initialized to ones on GPU." << std::endl;
 }
 
 Tensor* Tensor::reshape_tensor(std::vector<int>& new_shape, int new_ndim){
@@ -737,8 +696,6 @@ void Tensor::to_device(const std::string& target_device) {
         cpu_to_sycl(*this, queue);
     } else if (target_device == "cpu" &&  device == "sycl") {
         sycl_to_cpu(*this, queue);
-    } else {
-        std::cerr << "Unknown target device or device already in target state." << std::endl;
     }
 }
 
@@ -782,7 +739,6 @@ void cpu_to_sycl(Tensor& tensor, cl::sycl::queue& q) {
     tensor.data_gpu = cl::sycl::buffer<float, 1>(tensor.data.get(), cl::sycl::range<1>(tensor.size));
     tensor.device = "sycl";
 
-    std::cout << "Successfully sent tensor to: " << tensor.device << std::endl;
 }
 
 void sycl_to_cpu(Tensor& tensor, cl::sycl::queue& q) {
@@ -797,7 +753,6 @@ void sycl_to_cpu(Tensor& tensor, cl::sycl::queue& q) {
     tensor.data = std::move(data_host);
     tensor.device = "cpu";
 
-    std::cout << "Successfully sent tensor to: " << tensor.device << std::endl;
 }
 
 void Tensor::transpose_1D_tensor_cpu() {
@@ -913,9 +868,6 @@ Tensor* Tensor::transpose_axes_tensor(int axis1, int axis2) {
         std::cerr << "Invalid axes for transposition." << std::endl;
         return nullptr;
     }
-
-    std::cout << "axis1: " << axis1 << " axis2: " << axis2 << std::endl;
-    std::cout << "shape[axis1]: " << shape[axis1] << " shape[axis2]: " << shape[axis2] << std::endl;
 
     std::vector<int> new_shape = shape;
     std::swap(new_shape[axis1], new_shape[axis2]);

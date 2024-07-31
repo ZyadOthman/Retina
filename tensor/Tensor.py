@@ -205,10 +205,6 @@ class Tensor:
 
         return value
 
-        # result_data.shape[axis1] = self.shape[axis2]
-        print(f"shape axis1: {self.shape[axis1]}")
-        print(f"shape axis2: {self.shape[axis2]}")
-        # result_data.shape[axis2] = self.shape[axis1]
     def reshape(self, new_shape):
         """
         Reshape tensor
@@ -410,13 +406,6 @@ class Tensor:
 
         if self.shape[1] != other.shape[0]:
             raise ValueError("Incompatible shapes for matrix multiplication")
-        
-
-        print("|"*10)
-        print(self.shape)
-        print(other.shape)
-        print(f"Other:{other}")
-        print("|"*10)
 
         Tensor._C.matmul_tensor.argtypes = [ctypes.POINTER(CTensor), ctypes.POINTER(CTensor)]
         Tensor._C.matmul_tensor.restype = ctypes.POINTER(CTensor)
@@ -429,9 +418,6 @@ class Tensor:
         result_data.ndim = 2
         result_data.device = self.device
         result_data.numel = self.numel
-
-        print(f"result_data shape: {result_data.shape}")
-
 
         result_data.requires_grad = self.requires_grad or other.requires_grad
         if result_data.requires_grad:
@@ -584,7 +570,6 @@ class Tensor:
 
 
         if self.grad_fn is not None:
-            print(self.grad_fn)
             grads = self.grad_fn.backward(gradient)
             for tensor, grad in zip(self.grad_fn.input, grads):
                 if isinstance(tensor, Tensor):
@@ -603,10 +588,6 @@ class Tensor:
         if axis2 < 0:
             axis2 = self.ndim + axis2
 
-        print("*"*10)
-        print(self.shape)
-        print("*"*10)
-
         Tensor._C.transpose_axes_tensor.argtypes = [ctypes.POINTER(CTensor), ctypes.c_int, ctypes.c_int]
         Tensor._C.transpose_axes_tensor.restype = ctypes.POINTER(CTensor)
 
@@ -615,9 +596,6 @@ class Tensor:
         result_data = Tensor()
         result_data.tensor = result_tensor_ptr
         result_data.shape = self.shape[::-1].copy()
-        print("-"*10)
-        print(result_data.shape)
-        print("-"*10)
         result_data.ndim = self.ndim
         result_data.device = self.device
         result_data.numel = self.numel
