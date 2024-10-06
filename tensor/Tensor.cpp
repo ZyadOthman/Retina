@@ -156,7 +156,6 @@ Tensor *Tensor::sum_tensor_cpu(int axis, bool keepdim) {
         return nullptr;
     }
 
-    // Calculate new shape after summation
     std::vector<int> new_shape;
     for (int i = 0; i < ndim; ++i) {
         if (i != axis) {
@@ -166,16 +165,13 @@ Tensor *Tensor::sum_tensor_cpu(int axis, bool keepdim) {
         }
     }
 
-    // Calculate total elements in the new tensor
     int new_size = 1;
     for (int dim : new_shape) {
         new_size *= dim;
     }
 
-    // Allocate new data array
     std::unique_ptr<float[]> result_data(new float[new_size]());
     
-    // Perform summation
     for (int i = 0; i < size; ++i) {
         int index = i;
         int remainder = i;
@@ -193,7 +189,6 @@ Tensor *Tensor::sum_tensor_cpu(int axis, bool keepdim) {
         result_data[new_index] += data[i];
     }
 
-    // Update tensor with new data and shape
     return new Tensor(std::move(result_data), new_shape, device);
 }
 
@@ -252,7 +247,6 @@ Tensor *Tensor::sum_tensor_sycl(int axis, bool keepdim) {
 
     cl::sycl::queue queue(cl::sycl::gpu_selector_v);
 
-    // Calculate new shape after summation
     std::vector<int> new_shape;
     for (int i = 0; i < ndim; ++i) {
         if (i != axis) {
@@ -267,11 +261,9 @@ Tensor *Tensor::sum_tensor_sycl(int axis, bool keepdim) {
         new_size *= dim;
     }
 
-    // Allocate new data buffer
     auto result_data = std::make_unique<float[]>(new_size);
     cl::sycl::buffer<float, 1> result_buffer(result_data.get(), cl::sycl::range<1>(new_size));
 
-    // Create raw arrays for shape and strides
     std::vector<int> shape_copy = shape;
     std::vector<int> strides_copy = strides;
     int* shape_raw = shape_copy.data();
@@ -290,7 +282,6 @@ Tensor *Tensor::sum_tensor_sycl(int axis, bool keepdim) {
             int new_index = 0;
             int new_stride = 1;
 
-            // Calculate new index ignoring the axis dimension
             for (int j = ndim_local - 1; j >= 0; --j) {
                 int current_dim = shape_raw[j];
                 int position = remainder % current_dim;
@@ -301,7 +292,6 @@ Tensor *Tensor::sum_tensor_sycl(int axis, bool keepdim) {
                 }
             }
 
-            // Use atomic operation to avoid race conditions
             cl::sycl::atomic_ref<float, cl::sycl::memory_order::relaxed, cl::sycl::memory_scope::device> atomic_data(result_acc[new_index]);
             atomic_data.fetch_add(data_acc[index]);
         });
@@ -354,7 +344,7 @@ Tensor *Tensor::scalar_add_tensor_sycl(float scalar) {
         cgh.parallel_for<class scalar_addition>(cl::sycl::range<1>(size), [=](cl::sycl::id<1> idx) {
             result_acc[idx] = data_acc[idx] + scalar;
         });
-    }).wait(); // Ensure kernel execution completes
+    }).wait();
 
     Tensor* result = new Tensor(std::move(result_data), shape, device);
     result->data_gpu = std::make_optional<cl::sycl::buffer<float, 1>>(result_buffer);
@@ -470,9 +460,6 @@ Tensor *Tensor::elementwise_div_tensor_sycl(Tensor* tensor) {
 
     return result;
 }
-
-
-
 
 Tensor *Tensor::scalar_div_tensor_sycl(float scalar) {
     sycl::queue queue(sycl::gpu_selector_v);
@@ -920,8 +907,7 @@ Tensor* Tensor::transpose_axes_tensor(int axis1, int axis2) {
                     int remainder = index;
                     int ndim = shape_acc.get_range()[0];
 
-                    // Pre-allocate fixed-size array for indices based on known ndim
-                    int indices[10];  // Assuming ndim <= 10
+                    int indices[10];
                     for (int j = ndim - 1; j >= 0; --j) {
                         indices[j] = remainder % shape_acc[j];
                         remainder /= shape_acc[j];

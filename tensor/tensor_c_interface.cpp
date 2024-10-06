@@ -3,27 +3,23 @@
 extern "C" {
 
     Tensor* create_tensor(float* data, int* shape, int ndim, const char* device) {
-        // Convert data and shape from C types to C++ types
         int size = 1;
         for (int i = 0; i < ndim; i++)
             size *= shape[i];
 
-        std::unique_ptr<float[]> dataPtr(new float[size]); // Create unique_ptr
-        std::copy(data, data + size, dataPtr.get()); // Copy data to the unique_ptr
+        std::unique_ptr<float[]> dataPtr(new float[size]);
+        std::copy(data, data + size, dataPtr.get());
 
         std::vector<int> shape_vec(shape, shape + ndim);
 
-        // Call Tensor constructor and return the created object
         return new Tensor(std::move(dataPtr), shape_vec, device);
     }
 
     float get_item(Tensor* tensor, float* indices) {
-        // Call get_item method of Tensor class
         return tensor->get_item(std::vector<float>(indices, indices + tensor->get_ndim()));
     }
 
     Tensor* add_tensor(Tensor* tensor1, Tensor* tensor2) {
-        // Call add_tensor method of Tensor class
         if (tensor1->ndim != tensor2->ndim) {
             std::cout << "Tensors must have the same number of dimensions " << tensor1->ndim << " and " << tensor2->ndim << " for addition" << std::endl;
             exit(1);
@@ -43,7 +39,6 @@ extern "C" {
 
 
     Tensor* scalar_add_tensor(float scalar, Tensor* tensor) {
-        // Call scalar add_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->scalar_add_tensor_cpu(scalar);
         else
@@ -51,7 +46,6 @@ extern "C" {
     }
 
     Tensor* scalar_sub_tensor(float scalar, Tensor* tensor) {
-        // Call scalar sub_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->scalar_sub_tensor_cpu(scalar);
         else
@@ -59,7 +53,6 @@ extern "C" {
     }
 
     Tensor* sub_tensor(Tensor* tensor1, Tensor* tensor2) {
-        // Call sub_tensor method of Tensor class
         if (tensor1->ndim != tensor2->ndim) {
             std::cout << "Tensors must have the same number of dimensions " << tensor1->ndim << " and " << tensor2->ndim << " for substraction" << std::endl;
             exit(1);
@@ -78,7 +71,6 @@ extern "C" {
     }
 
     Tensor* elementwise_mul_tensor(Tensor* tensor1, Tensor* tensor2) {
-        // Call elementwise_mul_tensor method of Tensor class
         if (tensor1->device == "cpu" && tensor2->device == "cpu")
             return tensor1->elementwise_mul_tensor_cpu(tensor2);
         else
@@ -86,7 +78,6 @@ extern "C" {
     }
 
     Tensor* tensor_div_tensor(Tensor* tensor1, Tensor* tensor2) {
-        // Call elementwise_div_tensor method of Tensor class
         if (tensor1->device == "cpu" && tensor2->device == "cpu")
             return tensor1->elementwise_div_tensor_cpu(tensor2);
         else
@@ -94,7 +85,6 @@ extern "C" {
     }
 
     Tensor* matmul_tensor(Tensor* tensor1, Tensor* tensor2) {
-        // Call matmul_tensor method of Tensor class
         if (tensor1->device == "cpu" && tensor2->device == "cpu")
             return tensor1->matmul_tensor_cpu(tensor2);
         else {
@@ -103,7 +93,6 @@ extern "C" {
     }
 
     Tensor* tensor_pow_scalar(Tensor* tensor, float base) {
-        // Call tensor_pow_scalar method of Tensor class
         if (tensor->device == "cpu")
             return tensor->tensor_pow_scalar_cpu(base);
         else
@@ -112,7 +101,6 @@ extern "C" {
     }
 
     Tensor* scalar_pow_tensor(float exponent, Tensor* tensor) {
-        // Call scalar_pow_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->scalar_pow_tensor_cpu(exponent);
         else
@@ -120,7 +108,6 @@ extern "C" {
     }
 
     Tensor* scalar_div_tensor(float scalar, Tensor* tensor) {
-        // Call scalar div_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->scalar_div_tensor_cpu(scalar);
         else
@@ -128,7 +115,6 @@ extern "C" {
     }
 
     Tensor* scalar_mul_tensor(float scalar, Tensor* tensor) {
-        // Call scalar mul_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->scalar_mul_tensor_cpu(scalar);
         else
@@ -136,7 +122,6 @@ extern "C" {
     }
 
     Tensor* tensor_div_scalar(Tensor* tensor, float scalar) {
-        // Call scalar div_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->tensor_div_scalar_cpu(scalar);
         else
@@ -144,7 +129,6 @@ extern "C" {
     }
 
     Tensor* log_tensor(Tensor* tensor) {
-        // Call log_tensor method of Tensor class
         if (tensor->device == "cpu")
             return tensor->log_tensor_cpu();
         else
@@ -168,15 +152,12 @@ extern "C" {
     }
 
     Tensor* reshape_tensor(Tensor* tensor, int* new_shape, int new_ndim) {
-        // Convert new_shape from C type to C++ type
         std::vector<int> new_shape_vec(new_shape, new_shape + new_ndim);
 
-        // Call reshape_tensor method of Tensor class and return the result
         return tensor->reshape_tensor(new_shape_vec, new_ndim);
     }
 
     void print_tensor(const Tensor* tensor) {
-        // Call print method of Tensor class
         tensor->print();
     }
 

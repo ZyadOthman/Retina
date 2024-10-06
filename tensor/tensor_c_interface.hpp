@@ -10,10 +10,8 @@
 extern "C" {
 #endif
 
-    // Forward declaration of Tensor structure
     typedef struct Tensor Tensor;
 
-    // Function declarations
     Tensor* create_tensor(float* data, int* shape, int ndim, const char* device);
     float get_item(Tensor* tensor, float* indices);
     Tensor* add_tensor(Tensor* tensor1, Tensor* tensor2);
